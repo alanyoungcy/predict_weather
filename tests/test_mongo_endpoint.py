@@ -4,7 +4,7 @@ from unittest.mock import patch
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / 'api' / 'mongo-test.py'
+MODULE_PATH = Path(__file__).resolve().parents[1] / 'api' / 'mongo-test' / 'app.py'
 spec = spec_from_file_location('mongo_test_endpoint', MODULE_PATH)
 module = module_from_spec(spec)
 assert spec and spec.loader
