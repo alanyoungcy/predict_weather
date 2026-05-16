@@ -4,8 +4,12 @@ __pycache__/
 .mypy_cache/
 .venv/
 .env
+.env.local
 *.pyc
 /data/**
 !/data/.gitkeep
 /models/**
 !/models/.gitkeep
+.vercel
+.vercel
+.env*.local

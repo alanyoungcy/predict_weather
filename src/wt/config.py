@@ -33,7 +33,11 @@ class Station(BaseModel):
 class AppSettings(BaseSettings):
     """Environment-backed runtime settings."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=(".env.local", ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     data_dir: Path = Field(default=DATA_DIR, alias="DATA_DIR")
     models_dir: Path = Field(default=MODELS_DIR, alias="MODELS_DIR")
