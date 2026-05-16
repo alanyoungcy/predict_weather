@@ -1,0 +1,57 @@
+stations:
+  - kalshi_city: NYC
+    icao: KNYC
+    ghcnd_id: USW00094728
+    lat: 40.7789
+    lon: -73.9692
+    tz: America/New_York
+    wfo: OKX
+  - kalshi_city: CHI
+    icao: KORD
+    ghcnd_id: USW00094846
+    lat: 41.9950
+    lon: -87.9336
+    tz: America/Chicago
+    wfo: LOT
+  - kalshi_city: LAX
+    icao: KLAX
+    ghcnd_id: USW00023174
+    lat: 33.9381
+    lon: -118.3889
+    tz: America/Los_Angeles
+    wfo: LOX
+  - kalshi_city: MIA
+    icao: KMIA
+    ghcnd_id: USW00012839
+    lat: 25.7906
+    lon: -80.3164
+    tz: America/New_York
+    wfo: MFL
+  - kalshi_city: AUS
+    icao: KAUS
+    ghcnd_id: USW00013904
+    lat: 30.1944
+    lon: -97.6700
+    tz: America/Chicago
+    wfo: EWX
+  - kalshi_city: PHL
+    icao: KPHL
+    ghcnd_id: USW00013739
+    lat: 39.8722
+    lon: -75.2408
+    tz: America/New_York
+    wfo: PHI
+  - kalshi_city: DEN
+    icao: KDEN
+    ghcnd_id: USW00003017
+    lat: 39.8467
+    lon: -104.6562
+    tz: America/Denver
+    wfo: BOU
+  - kalshi_city: BOS
+    icao: KBOS
+    ghcnd_id: USW00014739
+    lat: 42.3606
+    lon: -71.0106
+    tz: America/New_York
+    wfo: BOX

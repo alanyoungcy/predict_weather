@@ -1,0 +1,37 @@
+targets:
+  tmax:
+    venues:
+      kalshi:
+        series_by_city:
+          NYC: KXHIGHNY
+          CHI: KXHIGHCHI
+          LAX: KXHIGHLAX
+          MIA: KXHIGHMIA
+          AUS: KXHIGHAUS
+          PHL: KXHIGHPHL
+          DEN: KXHIGHDEN
+          BOS: KXHIGHBOS
+      polymarket:
+        slug_by_city: {}
+  tmin:
+    venues:
+      kalshi:
+        series_by_city:
+          NYC: KXLOWNY
+          CHI: KXLOWCHI
+          LAX: KXLOWLAX
+          MIA: KXLOWMIA
+          AUS: KXLOWAUS
+          PHL: KXLOWPHL
+          DEN: KXLOWDEN
+          BOS: KXLOWBOS
+      polymarket:
+        slug_by_city: {}
+  apcp24:
+    venues:
+      kalshi:
+        series_by_city: {}
+      polymarket:
+        slug_by_city: {}
+market_availability:
+  note: Verify live market availability per venue before trading and encode launch windows in a later milestone.

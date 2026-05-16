@@ -1,0 +1,26 @@
+models:
+  hrrr:
+    enabled: true
+    product: sfc
+    historical_start: 2014-08-01
+    run_hours_utc: [0, 6, 12, 18]
+  gfs:
+    enabled: true
+    product: pgrb2.0p25
+    historical_start: 2021-02-01
+    run_hours_utc: [0, 6, 12, 18]
+  nbm:
+    enabled: true
+    product: core
+    historical_start: 2020-09-01
+    run_hours_utc: [1, 7, 13, 19]
+  gefs:
+    enabled: true
+    product: atmos.0p50
+    historical_start: 2020-09-01
+    run_hours_utc: [0, 6, 12, 18]
+  aifs:
+    enabled: true
+    product: single-levels
+    historical_start: 2024-02-01
+    run_hours_utc: [0, 6, 12, 18]

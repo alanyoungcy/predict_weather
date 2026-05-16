@@ -1,0 +1,43 @@
+deployment:
+  frontend:
+    provider: vercel
+    mode: api-and-dashboard-only
+    note: >-
+      Do not run historical backfills, model training, or large Herbie downloads
+      inside Vercel Hobby functions. Use Vercel for the read API, dashboard, and
+      lightweight signal refresh endpoints only.
+  schedulers:
+    primary: external-cron-worker
+    candidates:
+      - github-actions
+      - always-on-vm
+      - local-mac-cron
+storage:
+  labels:
+    primary: supabase
+    mirror_local_parquet: true
+  predictions:
+    primary: supabase
+    mirror_local_parquet: true
+  signals:
+    primary: supabase
+    mirror_local_parquet: true
+  market_snapshots:
+    primary: mongodb_atlas
+  analytics:
+    primary: duckdb
+    alternative: motherduck
+retention:
+  local_raw_days: 30
+  local_interim_days: 30
+  local_feature_days: 180
+  local_prediction_days: 365
+  local_signal_days: 365
+  local_log_days: 30
+  keep_model_versions: 4
+  keep_labels_forever: true
+  keep_market_snapshots_days: 30
+motherduck:
+  enabled: false
+  database: wt
+  schema: main
