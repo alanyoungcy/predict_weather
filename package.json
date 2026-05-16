@@ -1,0 +1,8 @@
+{
+  "name": "predict-weather-vercel-functions",
+  "private": true,
+  "version": "0.1.0",
+  "dependencies": {
+    "mongodb": "^6.19.0"
+  }
+}

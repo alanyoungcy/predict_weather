@@ -51,9 +51,9 @@ vercel env pull .env.local
 
 ## Mongo Test Endpoint
 
-There is a minimal Vercel-ready MongoDB connectivity endpoint at `api/mongo-test/app.py`.
+There is a minimal Vercel-ready MongoDB connectivity endpoint at `api/mongo-test.js`.
 
-- Route: `/api/mongo-test` (rewritten to `/api`)
+- Route: `/api/mongo-test`
 - Method: `GET`
 - Optional protection: set `MONGO_TEST_TOKEN` and send it as `x-mongo-test-token` or `?token=...`
 
