@@ -91,7 +91,7 @@ class AppSettings(BaseSettings):
         default=None,
         validation_alias=AliasChoices("MOTHERDUCK_READONLY_TOKEN"),
     )
-    motherduck_database: str = Field(default="wt", alias="MOTHERDUCK_DATABASE")
+    motherduck_database: str | None = Field(default=None, alias="MOTHERDUCK_DATABASE")
 
 
 class StationConfig(BaseModel):
@@ -123,7 +123,7 @@ class RetentionConfig(BaseModel):
 
 class MotherDuckConfig(BaseModel):
     enabled: bool = False
-    database: str = "wt"
+    database: str | None = None
     schema_name: str = Field(default="main", alias="schema")
 
 

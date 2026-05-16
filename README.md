@@ -48,3 +48,15 @@ Local development flow:
 vercel env pull .env.local
 /opt/miniconda3/envs/agentenv/bin/python scripts/check_storage_connections.py
 ```
+
+## Mongo Test Endpoint
+
+There is a minimal Vercel-ready MongoDB connectivity endpoint at `api/mongo-test.py`.
+
+- Route: `/api/mongo-test`
+- Method: `GET`
+- Optional protection: set `MONGO_TEST_TOKEN` and send it as `x-mongo-test-token` or `?token=...`
+
+The endpoint returns sanitized diagnostics only: whether `MONGODB_URI` is present,
+the resolved URI host, topology type, server types, and the ping result. It does
+not echo secrets.

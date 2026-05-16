@@ -39,5 +39,5 @@ retention:
   keep_market_snapshots_days: 30
 motherduck:
   enabled: false
-  database: wt
+  database:
   schema: main

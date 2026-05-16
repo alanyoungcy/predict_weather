@@ -18,6 +18,8 @@ class SupabaseStatus:
 
 def get_supabase_dsn(settings: AppSettings | None = None, *, non_pooling: bool = False) -> str:
     cfg = settings or load_settings()
+    if cfg.supabase_db_url_non_pooling:
+        return cfg.supabase_db_url_non_pooling
     if non_pooling and cfg.supabase_db_url_non_pooling:
         return cfg.supabase_db_url_non_pooling
     if cfg.supabase_db_url:
@@ -32,8 +34,11 @@ def check_supabase_connection(settings: AppSettings | None = None) -> SupabaseSt
     except ValueError as exc:
         return SupabaseStatus(connected=False, message=str(exc))
 
-    with psycopg.connect(dsn, connect_timeout=10) as conn:
-        with conn.cursor() as cur:
-            cur.execute("select version()")
-            version = str(cur.fetchone()[0])
-    return SupabaseStatus(connected=True, message="ok", server_version=version)
+    try:
+        with psycopg.connect(dsn, connect_timeout=10) as conn:
+            with conn.cursor() as cur:
+                cur.execute("select version()")
+                version = str(cur.fetchone()[0])
+        return SupabaseStatus(connected=True, message="ok", server_version=version)
+    except Exception as exc:  # pragma: no cover - live connectivity branch
+        return SupabaseStatus(connected=False, message=str(exc))

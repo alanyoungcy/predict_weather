@@ -21,7 +21,9 @@ def get_motherduck_dsn(settings: AppSettings | None = None, *, read_only: bool =
     token = cfg.motherduck_readonly_token if read_only and cfg.motherduck_readonly_token else cfg.motherduck_token
     if not token:
         raise ValueError("MotherDuck token is not configured")
-    return f"md:{cfg.motherduck_database}?motherduck_token={token}"
+    if cfg.motherduck_database:
+        return f"md:{cfg.motherduck_database}?motherduck_token={token}"
+    return f"md:?motherduck_token={token}"
 
 
 def check_motherduck_connection(settings: AppSettings | None = None) -> MotherDuckStatus:
@@ -31,9 +33,10 @@ def check_motherduck_connection(settings: AppSettings | None = None) -> MotherDu
     except ValueError as exc:
         return MotherDuckStatus(connected=False, message=str(exc))
 
-    conn = duckdb.connect(dsn)
     try:
-        conn.execute("select current_database()").fetchone()
-    finally:
+        conn = duckdb.connect(dsn)
+        current_database = conn.execute("select current_database()").fetchone()[0]
         conn.close()
-    return MotherDuckStatus(connected=True, message="ok", database=cfg.motherduck_database)
+        return MotherDuckStatus(connected=True, message="ok", database=str(current_database))
+    except Exception as exc:  # pragma: no cover - live connectivity branch
+        return MotherDuckStatus(connected=False, message=str(exc), database=cfg.motherduck_database)
