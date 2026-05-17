@@ -22,6 +22,17 @@ Use the `agentenv` conda environment for all commands.
 /opt/miniconda3/envs/agentenv/bin/pytest -q
 ```
 
+## Streamlit Dashboard
+
+The local dashboard shows training status, forecast artifacts, bucketed
+probabilities, and read-only Kalshi/Polymarket signal tables. It does not place
+orders.
+
+```bash
+/opt/miniconda3/envs/agentenv/bin/pip install -e '.[dashboard,worker]'
+streamlit run app/streamlit_app.py
+```
+
 ## Deployment Shape
 
 This project is now being designed for:

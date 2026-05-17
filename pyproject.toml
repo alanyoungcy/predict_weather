@@ -49,6 +49,10 @@ dev = [
   "ipykernel>=6.29",
 ]
 
+dashboard = [
+  "streamlit>=1.40",
+]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "-q"
