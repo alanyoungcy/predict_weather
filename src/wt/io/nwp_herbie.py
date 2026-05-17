@@ -60,6 +60,12 @@ def _normalize_init_run(value: datetime | str | pd.Timestamp) -> pd.Timestamp:
     return ts
 
 
+def _herbie_init_datetime(init_run_utc: pd.Timestamp) -> datetime:
+    """Return a timezone-naive UTC datetime for Herbie internals."""
+
+    return init_run_utc.tz_convert(UTC).tz_localize(None).to_pydatetime()
+
+
 def _spec_for(variable: str) -> VariableSpec:
     return _VARIABLE_SPECS.get(variable, VariableSpec(variable, variable, "raw", variable.lower().replace(":", "_")))
 
@@ -167,7 +173,11 @@ def get_model_point_forecast(
 
     rows: list[dict[str, Any]] = []
     for forecast_hour in forecast_hours:
-        herbie = Herbie(init_ts.to_pydatetime(), fxx=int(forecast_hour), **_herbie_kwargs_for(model, cfg))
+        herbie = Herbie(
+            _herbie_init_datetime(init_ts),
+            fxx=int(forecast_hour),
+            **_herbie_kwargs_for(model, cfg),
+        )
         for variable in variables:
             spec = _spec_for(variable)
             ds = herbie.xarray(spec.search, remove_grib=False)

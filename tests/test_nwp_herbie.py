@@ -7,7 +7,10 @@ from wt.io import nwp_herbie
 
 
 class FakeHerbie:
+    seen_dates = []
+
     def __init__(self, date, *, model, fxx, product, save_dir, verbose):
+        self.seen_dates.append(date)
         self.date = date
         self.model = model
         self.fxx = fxx
@@ -46,6 +49,7 @@ class FakeHerbie:
 
 
 def test_get_model_point_forecast_converts_units_and_shapes(monkeypatch, tmp_path):
+    FakeHerbie.seen_dates = []
     monkeypatch.setattr(nwp_herbie, '_load_herbie_class', lambda: FakeHerbie)
     settings = type('Settings', (), {
         'herbie_save_dir': tmp_path / 'herbie',
@@ -66,3 +70,5 @@ def test_get_model_point_forecast_converts_units_and_shapes(monkeypatch, tmp_pat
     assert frame.loc[frame['var_name'] == 't2m_f', 'value'].iloc[0] == 37.4
     assert round(frame.loc[frame['var_name'] == 'apcp_in', 'value'].iloc[0], 6) == 0.787402
     assert set(frame.columns) == {'valid_time_utc', 'var_name', 'value', 'model', 'init_run_utc', 'forecast_hour'}
+    assert FakeHerbie.seen_dates[0].tzinfo is None
+    assert frame['init_run_utc'].iloc[0].tzinfo is not None
