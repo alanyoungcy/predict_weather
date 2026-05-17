@@ -70,23 +70,38 @@ def _spec_for(variable: str) -> VariableSpec:
     return _VARIABLE_SPECS.get(variable, VariableSpec(variable, variable, "raw", variable.lower().replace(":", "_")))
 
 
-def _first_data_var(ds: xr.Dataset) -> xr.DataArray:
-    for name, data_array in ds.data_vars.items():
-        if name.lower() not in {"gribfile_projection", "lambert_conformal_conic"}:
-            return data_array
+def _iter_datasets(ds: xr.Dataset | list[xr.Dataset]) -> list[xr.Dataset]:
+    if isinstance(ds, xr.Dataset):
+        return [ds]
+    if isinstance(ds, list) and all(isinstance(item, xr.Dataset) for item in ds):
+        return ds
+    raise TypeError(f"Expected xarray Dataset or list[Dataset], got {type(ds).__name__}")
+
+
+def _first_data_var(ds: xr.Dataset | list[xr.Dataset]) -> xr.DataArray:
+    datasets = _iter_datasets(ds)
+    for dataset in datasets:
+        for name, data_array in dataset.data_vars.items():
+            if name.lower() not in {"gribfile_projection", "lambert_conformal_conic"}:
+                return data_array
     raise ValueError("Dataset contains no usable data variables")
 
 
-def _extract_valid_time(ds: xr.Dataset, init_run_utc: pd.Timestamp, forecast_hour: int) -> pd.Timestamp:
-    for coord_name in ("valid_time", "time"):
-        if coord_name in ds.coords:
-            value = ds.coords[coord_name].values
-            ts = pd.Timestamp(np.ravel(value)[0])
-            if ts.tzinfo is None:
-                ts = ts.tz_localize(UTC)
-            else:
-                ts = ts.tz_convert(UTC)
-            return ts
+def _extract_valid_time(
+    ds: xr.Dataset | list[xr.Dataset],
+    init_run_utc: pd.Timestamp,
+    forecast_hour: int,
+) -> pd.Timestamp:
+    for dataset in _iter_datasets(ds):
+        for coord_name in ("valid_time", "time"):
+            if coord_name in dataset.coords:
+                value = dataset.coords[coord_name].values
+                ts = pd.Timestamp(np.ravel(value)[0])
+                if ts.tzinfo is None:
+                    ts = ts.tz_localize(UTC)
+                else:
+                    ts = ts.tz_convert(UTC)
+                return ts
     return init_run_utc + pd.Timedelta(hours=forecast_hour)
 
 

@@ -8,6 +8,7 @@ from wt.io import nwp_herbie
 
 class FakeHerbie:
     seen_dates = []
+    return_dataset_list = False
 
     def __init__(self, date, *, model, fxx, product, save_dir, verbose):
         self.seen_dates.append(date)
@@ -18,7 +19,7 @@ class FakeHerbie:
 
     def xarray(self, search, remove_grib=False):
         if search == 'TMP:2 m':
-            return xr.Dataset(
+            dataset = xr.Dataset(
                 data_vars={
                     't2m': xr.DataArray(
                         [[273.15, 274.15], [275.15, 276.15]],
@@ -31,8 +32,9 @@ class FakeHerbie:
                     )
                 }
             )
+            return [xr.Dataset(), dataset] if self.return_dataset_list else dataset
         if search == 'APCP:surface':
-            return xr.Dataset(
+            dataset = xr.Dataset(
                 data_vars={
                     'tp': xr.DataArray(
                         [10.0, 20.0],
@@ -45,11 +47,13 @@ class FakeHerbie:
                     )
                 }
             )
+            return [dataset] if self.return_dataset_list else dataset
         raise AssertionError(search)
 
 
 def test_get_model_point_forecast_converts_units_and_shapes(monkeypatch, tmp_path):
     FakeHerbie.seen_dates = []
+    FakeHerbie.return_dataset_list = False
     monkeypatch.setattr(nwp_herbie, '_load_herbie_class', lambda: FakeHerbie)
     settings = type('Settings', (), {
         'herbie_save_dir': tmp_path / 'herbie',
@@ -72,3 +76,26 @@ def test_get_model_point_forecast_converts_units_and_shapes(monkeypatch, tmp_pat
     assert set(frame.columns) == {'valid_time_utc', 'var_name', 'value', 'model', 'init_run_utc', 'forecast_hour'}
     assert FakeHerbie.seen_dates[0].tzinfo is None
     assert frame['init_run_utc'].iloc[0].tzinfo is not None
+
+
+def test_get_model_point_forecast_handles_herbie_dataset_lists(monkeypatch, tmp_path):
+    FakeHerbie.seen_dates = []
+    FakeHerbie.return_dataset_list = True
+    monkeypatch.setattr(nwp_herbie, '_load_herbie_class', lambda: FakeHerbie)
+    settings = type('Settings', (), {
+        'herbie_save_dir': tmp_path / 'herbie',
+        'herbie_config_path': tmp_path / 'herbie' / 'config.toml',
+    })()
+
+    frame = nwp_herbie.get_model_point_forecast(
+        model='gfs',
+        init_run_utc=datetime(2026, 5, 15, 18, tzinfo=UTC),
+        forecast_hours=[1],
+        station_lat=40.9,
+        station_lon=-73.1,
+        variables=['TMP:2 m', 'APCP:surface'],
+        settings=settings,
+    )
+
+    assert list(frame['var_name']) == ['apcp_in', 't2m_f']
+    assert frame['valid_time_utc'].notna().all()
