@@ -188,14 +188,20 @@ def get_model_point_forecast(
 
     rows: list[dict[str, Any]] = []
     for forecast_hour in forecast_hours:
-        herbie = Herbie(
-            _herbie_init_datetime(init_ts),
-            fxx=int(forecast_hour),
-            **_herbie_kwargs_for(model, cfg),
-        )
+        try:
+            herbie = Herbie(
+                _herbie_init_datetime(init_ts),
+                fxx=int(forecast_hour),
+                **_herbie_kwargs_for(model, cfg),
+            )
+        except Exception:
+            continue
         for variable in variables:
             spec = _spec_for(variable)
-            ds = herbie.xarray(spec.search, remove_grib=False)
+            try:
+                ds = herbie.xarray(spec.search, remove_grib=False)
+            except Exception:
+                continue
             data_array = _first_data_var(ds)
             point_value = _point_value_from_dataarray(data_array, station_lat=station_lat, station_lon=station_lon)
             rows.append(

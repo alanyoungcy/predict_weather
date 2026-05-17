@@ -59,3 +59,41 @@ def test_build_training_features_uses_only_prior_day_labels():
     assert features.loc[0, 'obs_tmax_lag1_f'] != 99.0
     assert 'hrrr_t2m_max_f' in features.columns
     assert 'gfs_apcp_24h_in' in features.columns
+
+
+def test_build_training_features_skips_models_before_historical_start():
+    labels = pd.DataFrame(
+        [
+            {'station': 'KNYC', 'local_date': date(2018, 4, 30), 'tmax_f': 60.0, 'tmin_f': 45.0, 'precip_in': 0.0},
+            {'station': 'KNYC', 'local_date': date(2018, 5, 1), 'tmax_f': 61.0, 'tmin_f': 46.0, 'precip_in': 0.0},
+        ]
+    )
+    calls = []
+
+    def fake_fetcher(model, init_run, hours, lat, lon, variables):
+        calls.append(model)
+        return pd.DataFrame(
+            [
+                {
+                    'valid_time_utc': pd.Timestamp(init_run),
+                    'var_name': 't2m_f',
+                    'value': 50.0,
+                    'model': model,
+                    'init_run_utc': pd.Timestamp(init_run),
+                    'forecast_hour': 1,
+                }
+            ]
+        )
+
+    features = build_training_features(
+        station=_station(),
+        start_date=date(2018, 5, 1),
+        end_date=date(2018, 5, 1),
+        label_df=labels,
+        forecast_fetcher=fake_fetcher,
+        models=['hrrr', 'gfs'],
+    )
+
+    assert calls == ['hrrr']
+    assert 'hrrr_t2m_max_f' in features.columns
+    assert 'gfs_t2m_max_f' not in features.columns
