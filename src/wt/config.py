@@ -55,6 +55,10 @@ class AppSettings(BaseSettings):
     kalshi_api_key_id: str | None = Field(default=None, alias="KALSHI_API_KEY_ID")
     kalshi_private_key_path: Path | None = Field(default=None, alias="KALSHI_PRIVATE_KEY_PATH")
     polymarket_api_url: str = Field(default="https://clob.polymarket.com", alias="POLYMARKET_API_URL")
+    polymarket_gamma_api_url: str = Field(
+        default="https://gamma-api.polymarket.com",
+        alias="POLYMARKET_GAMMA_API_URL",
+    )
     supabase_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL"),

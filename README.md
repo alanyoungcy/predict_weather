@@ -5,12 +5,13 @@ daily temperature and precipitation contracts across multiple venues.
 
 ## Status
 
-Milestone `M1` is scaffolded:
-- Python project layout under `src/wt`
-- Configuration files under `config/`
-- Environment template in `.env.example`
-- DST-aware settlement-day window utility in `wt.utils.time`
-- Exchange adapters scaffolded for Kalshi and Polymarket
+Implemented foundation:
+- M1-M5 scaffolding and ground-truth/model-training foundations
+- Probability distributions and bucket probability alignment
+- Venue-agnostic EV and signal generation for Kalshi and Polymarket rows
+- Read-only Kalshi and Polymarket market clients
+- Live feature builder with Herbie primary ingestion and Open-Meteo/NWS fallbacks
+- Worker entrypoints for morning/evening dry-runs, training, and basic backtests
 
 ## Quickstart
 
@@ -31,7 +32,13 @@ This project is now being designed for:
 - DuckDB or MotherDuck: analytics, backtests, and feature research
 
 Heavy backfills, Herbie downloads, and model training should run on an external
-worker, not inside Vercel functions. See
+worker, not inside Vercel functions. Live worker smoke test:
+
+```bash
+/opt/miniconda3/envs/agentenv/bin/python -m wt.orchestration.cron_evening --dry-run --station KNYC
+```
+
+See
 [docs/deployment.md](/Volumes/Orico/code/pythoncode/polymarkettool/polymarket-weather/docs/deployment.md).
 
 ## Vercel Storage Integration
@@ -51,7 +58,7 @@ vercel env pull .env.local
 
 ## Mongo Test Endpoint
 
-There is a minimal Vercel-ready MongoDB connectivity endpoint at `api/mongo-test.js`.
+There is a minimal Vercel-ready MongoDB connectivity endpoint at `api/app.py`.
 
 - Route: `/api/mongo-test`
 - Method: `GET`
